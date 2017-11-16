@@ -19,47 +19,15 @@ namespace SqlTestApp
         // Here we run all our program logic
         void Run()
         {
-            string connectionString = @"server=localhost;database=DotNetDatabase;Trusted_Connection=yes";
-            SqlConnection sqlConnection = new SqlConnection();
-            sqlConnection.ConnectionString = connectionString;
+            StudentCollection studentCollection = StudentCollection.Select();
 
-            sqlConnection.Open();
-            if (sqlConnection.State != System.Data.ConnectionState.Open)
+            foreach (Student s in studentCollection)
             {
-                Console.WriteLine("Connection failed");
-                return;
-            }
-            else
-            {
-                Console.WriteLine("Connection successful");
+                Console.WriteLine($"{s.LastName}, {s.FirstName} has student id of {s.Id}");
             }
 
-            // Do your SQL stuff here /////////////////////////////////////////////////////////////
-            string commandString = "SELECT * FROM STUDENT";
-            SqlCommand sqlCommand = new SqlCommand(commandString, sqlConnection);
-            SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
-
-            Student student = new Student();
-
-            while (sqlDataReader.Read())
-            {
-                student.FirstName = sqlDataReader.GetString(sqlDataReader.GetOrdinal("FirstName"));
-                student.LastName = sqlDataReader.GetString(sqlDataReader.GetOrdinal("LastName"));
-                student.Id = sqlDataReader.GetInt32(sqlDataReader.GetOrdinal("Id"));
-                if (!sqlDataReader.IsDBNull(sqlDataReader.GetOrdinal("MajorID")))
-                {
-                    student.MajorId = sqlDataReader.GetInt32(sqlDataReader.GetOrdinal("MajorId"));
-                }
-                else
-                {
-                    student.MajorId = 0;
-                }
-                //Console.WriteLine(int.Parse(sqlDataReader["MajorId"].ToString()));
-            }
-            // End SQL stuff, OK to close /////////////////////////////////////////////////////////
-
-            sqlConnection.Close();
-            Console.WriteLine("Connection closed");
+            Student bob = StudentCollection.Select(6);
+            Console.WriteLine($"Student number 6 is {bob.FirstName} {bob.LastName}");
         }
     }
 }
